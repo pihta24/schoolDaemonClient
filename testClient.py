@@ -47,12 +47,13 @@ def main():
     # network = ipaddress.ip_network("192.168.0.0/24")
     
     network = list(network)[1:-1]
+    hostname = input("Enter hostname: ")
     
     print("""Commands:
-    ffx(url) - Firefox (requires url without spaces)
+    ffx (url) - Firefox (requires url with space after command)
     blc - Block
     ubl - Unblock
-    ntf(msg) - Notify (requires msg without spaces)
+    ntf (msg) - Notify (requires msg with space after command)
     pau - Policy Auth
     pno - Policy No
     shd - Shutdown
@@ -61,11 +62,18 @@ def main():
     pip - Pip Install
     est - Enable System Settings
     dst - Disable System Settings
+    wae (path) - Wallpaper Daemon Enable (takes optional path with space after command)
+    wad - Wallpaper Daemon Disable
     """)
     
     while command := input("Command: "):
         for host in network:
-            msg = add_rand_id(sign(add_timestamp(add_hostname(command.encode(), "alpha-309"))))
+            command = command.split()
+            if len(command) == 1:
+                command = command[0].encode()
+            else:
+                command = command[0].encode() + command[1].encode("utf-8")
+            msg = add_rand_id(sign(add_timestamp(add_hostname(command, hostname))))
             s.sendto(msg, (str(host), 55555))
     # message = add_rand_id(sign(add_timestamp(add_hostname(b"001", "alpha-310"))))
     # for i in network:
