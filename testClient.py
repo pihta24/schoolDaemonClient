@@ -67,13 +67,13 @@ def main():
     """)
     
     while command := input("Command: "):
+        command = command.split()
+        if len(command) == 1:
+            command = command[0].encode()
+        else:
+            command = command[0].encode() + command[1].encode("utf-8")
+        msg = add_rand_id(sign(add_timestamp(add_hostname(command, hostname))))
         for host in network:
-            command = command.split()
-            if len(command) == 1:
-                command = command[0].encode()
-            else:
-                command = command[0].encode() + command[1].encode("utf-8")
-            msg = add_rand_id(sign(add_timestamp(add_hostname(command, hostname))))
             s.sendto(msg, (str(host), 55555))
     # message = add_rand_id(sign(add_timestamp(add_hostname(b"001", "alpha-310"))))
     # for i in network:
