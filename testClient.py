@@ -44,7 +44,8 @@ def main():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.bind(('', 55554))
     network = ipaddress.ip_network("172.18.136.0/23")
-    # network = ipaddress.ip_network("192.168.0.0/24")
+    ip = ([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")][:1])[0]
+    network = ipaddress.ip_network("192.168.0.0/24")
     
     network = list(network)[1:-1]
     hostname = input("Enter hostname: ")
@@ -70,6 +71,8 @@ def main():
         command = command.split()
         if len(command) == 1:
             command = command[0].encode()
+            if command == b"scn":
+                command += ip.encode("utf-8") + ":".encode("utf-8") + str(55554).encode("utf-8")
         else:
             command = command[0].encode() + command[1].encode("utf-8")
         msg = add_rand_id(sign(add_timestamp(add_hostname(command, hostname))))
